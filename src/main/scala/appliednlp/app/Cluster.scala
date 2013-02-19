@@ -20,18 +20,58 @@ object Cluster {
   def main(args: Array[String]) {
     // Parse and get the command-line options
     val opts = ClusterOpts(args)
-    
+    //println(opts.transform())
+
     // This tells the k-means algorithm how much debugging information to show you
     // while you run the algorithm. 
     val logLevel = if (opts.verbose()) Level.DEBUG else Level.INFO
     Logger.getRootLogger.setLevel(logLevel)
     
     // Your code starts here. You'll use and extend it during every problem.
+    val data = opts.features() match {
+      case "standard" => DirectCreator(opts.filename()).toList
+      case "schools" => SchoolsCreator(opts.filename()).toList
+      case "countries" => CountriesCreator(opts.filename()).toList
+      case "fed-simple" => new FederalistCreator(true)(opts.filename()).toList
+      case "fed-full" => new FederalistCreator()(opts.filename()).toList
+      case _ => throw new MatchError("Invalid feature type: " + opts.features())
+    }
+    //data.foreach(println)
+    val labels = for (triple <- data) yield triple._1
+    val goldClusterIds = for (triple <- data) yield triple._2
+    val justThePoints = for (triple <- data) yield triple._3
 
+    val adjustedPoints = PointTransformer(opts.transform(), justThePoints.toIndexedSeq)(justThePoints.toIndexedSeq)
 
+    val kMeansInstance = new Kmeans(adjustedPoints,DistanceFunction(opts.distance()))
+    val centroids = kMeansInstance.run(opts.k())._2
+
+    if (opts.showCentroids()) {
+      centroids.foreach(println)
+    }
+
+    val (squaredDistSum, memberships) = kMeansInstance.computeClusterMemberships(centroids)
+
+    val confusionMatrix = ClusterConfusionMatrix(goldClusterIds.toIndexedSeq,opts.k(),memberships)
+    println(confusionMatrix)
+
+    //ids: Seq[String], labels: Seq[String], predictedClusterIds: Seq[Int]
+    if (opts.report()) {
+      ClusterReport(labels,goldClusterIds,memberships)
+    }
   }
 
 }
+
+/**
+ * My euclidean algorithm
+      val groupedPointPairs = for (triple <- data) yield (triple._2,triple._3)
+      val groupedLists = groupedPointPairs.toList groupBy {_._1} mapValues {v => (v map {_._2})}
+      for (l <- groupedLists) {
+        val xValues = for (point <- l._2) yield point.coord(0)
+        val yValues = for (point <- l._2) yield point.coord(1)
+        println(Point(IndexedSeq(xValues.sum/xValues.length,yValues.sum/yValues.length)))
+ */
 
 
 /**

@@ -1,9 +1,9 @@
 Applied-NLP, Homework 3 Answers
 
-Name: 
-EID:
+Name: Eric Latimer
+EID: egl33
 
-Link to applied-nlp fork: 
+Link to applied-nlp fork: https://github.com/ericlatimer/applied-nlp.git
 
 --------------------------------------------------------------------------------
 
@@ -11,42 +11,186 @@ Problem 1
 
 Part (b): Provide the requested output.
 
+> run-main appliednlp.app.Cluster -k 3 -d e data/cluster/generated/clusters_equal_variance.dat
+[info] Compiling 1 Scala source to /Users/eric/Dropbox/CS395T-ANLP/my-applied-nlp/applied-nlp/target/classes...
+[warn] there were 8 feature warnings; re-run with -feature for details
+[warn] one warning found
+[info] Running appliednlp.app.Cluster -k 3 -d e data/cluster/generated/clusters_equal_variance.dat
+--------------------------------------------------------------------------------
+Confusion matrix.
+Columns give predicted counts. Rows give gold counts.
+--------------------------------------------------------------------------------
+0	0	50	|	50	[1]
+30	0	0	|	30	[2]
+0	20	0	|	20	[3]
+-------------------------
+30	20	50
+[0]	[1]	[2]
+
+[success] Total time: 2 s, completed Feb 18, 2013 10:13:45 AM
 
 Problem 2
 
 * Provide th command line call and the output.
 
+> run-main appliednlp.app.Cluster -k 3 -d euclidean -t z data/cluster/generated/clusters_bigger_x_variance.dat
+[info] Compiling 1 Scala source to /Users/eric/Dropbox/CS395T-ANLP/my-applied-nlp/applied-nlp/target/classes...
+[warn] there were 9 feature warnings; re-run with -feature for details
+[warn] one warning found
+[info] Running appliednlp.app.Cluster -k 3 -d euclidean -t z data/cluster/generated/clusters_bigger_x_variance.dat
+--------------------------------------------------------------------------------
+Confusion matrix.
+Columns give predicted counts. Rows give gold counts.
+--------------------------------------------------------------------------------
+46	4	0	|	50	[1]
+2	25	3	|	30	[2]
+0	3	17	|	20	[3]
+-------------------------
+48	32	20
+[0]	[1]	[2]
+
+[success] Total time: 2 s, completed Feb 18, 2013 10:45:14 AM
 
 Problem 3
 
 Part (a): Provide the clusters and any comments.
 
+[3.5962962962962957,3.7629629629629626]
+[5.486956521739131,5.482608695652174]
+
+Both 6th graders and 4th graders performed below average since 3.5,3.7 < 4.0 and 5.486,5.482 < 6.0.
 
 Part (b): Discuss outliers.
 
+2 of the schools had high grade averages for their 4th grade students: EDGEWOOD and HOOKER.
+The grades were high enough to bump them into the 6th grade cluster
+
+4 of the schools had low grade averages for their 6th grade students: BRENNAN, CONTE, DAY, and WINCHESTER
+The grades were low enough to get clustered with the 4th graders.
+
+output:
+
+[info] Running appliednlp.app.Cluster -k 2 -d euclidean --features schools -c -r data/cluster/schools/achieve.dat
+[5.486956521739131,5.482608695652174]
+[3.5962962962962957,3.7629629629629626]
+--------------------------------------------------------------------------------
+Confusion matrix.
+Columns give predicted counts. Rows give gold counts.
+--------------------------------------------------------------------------------
+2	23	|	25	[4]
+21	4	|	25	[6]
+-----------------
+23	27
+[0]	[1]
+
+[Label: 4] <=> [Cluster: 1]
+Ids: BALDWIN_4th	BARNARD_4th	BEECHER_4th	BRENNAN_4th	CLINTON_4th	CONTE_4th	DAVIS_4th	DAY_4th	DWIGHT_4th	EDWARDS_4th	HALE_4th	IVY_4th	KIMBERLY_4th	LINCOLN_BASSETT_4th	LOVELL_4th	PRINCE_4th	ROSS_4th	SCRANTON_4th	SHERMAN_4th	TRUMAN_4th	WEST_HILLS_4th	WINCHESTER_4th	WOODWARD_4th
+
+[Label: 4] <=> [Cluster: 0]
+Ids: EDGEWOOD_4th	HOOKER_4th
+
+[Label: 6] <=> [Cluster: 0]
+Ids: BALDWIN_6th	BARNARD_6th	BEECHER_6th	CLINTON_6th	DAVIS_6th	DWIGHT_6th	EDGEWOOD_6th	EDWARDS_6th	HALE_6th	HOOKER_6th	IVY_6th	KIMBERLY_6th	LINCOLN_BASSETT_6th	LOVELL_6th	PRINCE_6th	ROSS_6th	SCRANTON_6th	SHERMAN_6th	TRUMAN_6th	WEST_HILLS_6th	WOODWARD_6th
+
+[Label: 6] <=> [Cluster: 1]
+Ids: BRENNAN_6th	CONTE_6th	DAY_6th	WINCHESTER_6th
 
 Part (c): Your interpretation for output when k=4.
 
+Increasing the number of clusters to 4 results in a wider distribution of data among the clusters.
+Instead of trying to cram all the data into 2 clusters and having outliers result, 4 clusters allows for a "normal" mixture of 4th and 6th grade scores.
+It also creates a "bottom" cluster (0) and a "top" cluster (1) which both lack grade diversity.
+This is a good attribute of the data, and perhaps raising k even larger would create a better (stricter) classification.
+
+output:
+
+[info] Running appliednlp.app.Cluster -k 4 -d euclidean --features schools -c -r data/cluster/schools/achieve.dat
+[3.2777777777777777,3.4388888888888887]
+[7.1,6.3]
+[4.370588235294117,4.68235294117647]
+[5.45,5.47]
+--------------------------------------------------------------------------------
+Confusion matrix.
+Columns give predicted counts. Rows give gold counts.
+--------------------------------------------------------------------------------
+18	0	5	2	|	25	[4]
+0	5	12	8	|	25	[6]
+---------------------------------
+18	5	17	10
+[0]	[1]	[2]	[3]
+
+[Label: 4] <=> [Cluster: 2]
+Ids: BEECHER_4th	DAVIS_4th	HALE_4th	LOVELL_4th	ROSS_4th
+
+[Label: 4] <=> [Cluster: 0]
+Ids: BALDWIN_4th	BARNARD_4th	BRENNAN_4th	CLINTON_4th	CONTE_4th	DAY_4th	DWIGHT_4th	EDWARDS_4th	IVY_4th	KIMBERLY_4th	LINCOLN_BASSETT_4th	PRINCE_4th	SCRANTON_4th	SHERMAN_4th	TRUMAN_4th	WEST_HILLS_4th	WINCHESTER_4th	WOODWARD_4th
+
+[Label: 6] <=> [Cluster: 1]
+Ids: BEECHER_6th	DAVIS_6th	EDGEWOOD_6th	HOOKER_6th	WOODWARD_6th
+
+[Label: 6] <=> [Cluster: 2]
+Ids: BALDWIN_6th	BRENNAN_6th	CONTE_6th	DAY_6th	DWIGHT_6th	IVY_6th	KIMBERLY_6th	LINCOLN_BASSETT_6th	PRINCE_6th	SCRANTON_6th	TRUMAN_6th	WINCHESTER_6th
+
+[Label: 6] <=> [Cluster: 3]
+Ids: BARNARD_6th	CLINTON_6th	EDWARDS_6th	HALE_6th	LOVELL_6th	ROSS_6th	SHERMAN_6th	WEST_HILLS_6th
+
+[Label: 4] <=> [Cluster: 3]
+Ids: EDGEWOOD_4th	HOOKER_4th
 
 Problem 4
 
 * Describe what you found.
 
+Using smaller cluster cardinalities, such as 2, euclidean distance and no scaling shows that countries with high birth rates also have high death rates (and vice versa).  The higher cluster contains a high percentage of the South American countries and Mexico and the lower cluster mostly European countries, the US, and Australia/New Zealand.  Increasing k to 10 while keeping the other variables the same shows some definite outlying clusters.  For example, Ivory Coast and Ghana comprise a cluster with a death rate of 29.35.  A couple interesting clusters with extremely low birth rates are comprised of countries in very close proximity, such as Denmark, Germany, Austria, Belgium, Norway, and Switzerland.
+
+Using cosine as the distance function, no scaling, and reverting to a k of 2 revealed 2 clusters with much narrower gaps between their respective birth and death rates. Additionally, while euclidean produced 2 clusters of roughly equal size, the cosine results placed only 21 countries in the lower birth rate cluster and 49 in the other.  The former included mostly the aforementioned European countries, and the latter included the rest.  Increasing k to 10 and leaving all else the same produces clusters similar to the k=10 euclidean results
+
+Changing the distance function to manhattan, and a k of 2, produces very similar birth/death rate ranges as using euclidean distance.  The memberships of the clusters were also very similar. Upping k to 10 produced similar clusters as the clusters which resulted from the other two distance functions with a k value of 10.
+
+Lastly, running the same experiment but using zscore didn't seem to change the clusters much for k = 2. The same holds for k = 10.
 
 Problem 5
 
 * Describe result of using z-score transform on the simple features.
 
+In some respects the results are better and in others they are worse.  They are better in that Hamilton is better clustered, including his independent work and the articles written by him and another author.  This is evidence by the strong third column.  Madison is also clustered well.  However, all 5 of Jay's articles are clustered in the same cluster as the main Hamilton cluster.  This could be a result of simply squeezing the data too close which merged Jay's articles into other author's areas.
+
+If I had to choose, I would say they are better overall because the goal is to maximize the number of correct clustered articles.  So because Jay only wrote 5 articles out of 85, it is a relatively small penalty to pay for the better results among Hamilton and Madison.
+
+output:
+
+> run-main appliednlp.app.Cluster -k 4 -d euclidean -f fed-simple -t zscore data/cluster/federalist/federalist.txt
+[info] Running appliednlp.app.Cluster -k 4 -d euclidean -f fed-simple -t zscore data/cluster/federalist/federalist.txt
+--------------------------------------------------------------------------------
+Confusion matrix.
+Columns give predicted counts. Rows give gold counts.
+--------------------------------------------------------------------------------
+0	8	40	3	|	51	[HAMILTON]
+0	1	2	0	|	3	[HAMILTON AND MADISON]
+0	0	5	0	|	5	[JAY]
+2	1	8	0	|	11	[HAMILTON OR MADISON]
+3	10	2	0	|	15	[MADISON]
+---------------------------------
+5	20	57	3
+[0]	[1]	[2]	[3]
 
 
 Problem 6
 
+This was a very frustrating problem!  I tried all sorts of things and I couldn't get the clusters to be much better than the simple (the, people, and which) model.  I didn't want to directly replicate your solution, so instead I tried ALL the other methods and none seemed to work.  Each on it's own seemed ok, but combining them never actually resulted in better clusters.
 
+My first idea was to go much further with function words.  I created some sets which each contained one type of function word.  The sets (prepositions, pronouns, etc) were then sent to a word counting function which counts the frequency of those words and returns a single data point per set.  So prepositions might return 543 and pronouns 234.  So instead of dimensional blowup, I summed all word counts per set.
+
+Next I tried averaging things.  I calculated the average sentence length.  Next I calculated average semicolon usage per total number of words.  Word size average was also calculated.  Again, none of these seemed to have any positive affect on the overall clustering.
+
+Lastly, I tried some total counts: total number of words and total number of ALLCAPS words.  The former did help cluster the data, but the latter did not seem to have a positive effect.
+
+Each heuristic was encapsulated as a sequence of points, just like the simple function.  Therefore I was able to zip and map arbitrary permutations of the various points to generate unique experiments.  Virtually all experiments seemed to result in better clusters with pca enabled.  This might be because the data varies so wildly, that the scaling and other transformations are necessary to weed out all the outlier data.
+
+I ended up getting the best clusters by interpolating only 2 heuristics: the simple (the, people, and which) word counts and also a total word count.  Here is the command to replicate:
+
+run-main appliednlp.app.Cluster -k 4 -d euclidean -f fed-full -t pca  data/cluster/federalist/federalist.txt
 
 Problem 7
 
-
-
-
-
-
+I've already spent too many hours on just 1-6 (especially 6)!
