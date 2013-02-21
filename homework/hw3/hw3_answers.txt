@@ -194,3 +194,5 @@ run-main appliednlp.app.Cluster -k 4 -d euclidean -f fed-full -t pca  data/clust
 Problem 7
 
 I've already spent too many hours on just 1-6 (especially 6)!
+
+Although I well point out that no vars were harmed (used) in the making of this homework assignment.
