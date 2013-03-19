@@ -1,0 +1,10 @@
+Applied-NLP, Homework 4 Answers
+
+Name: Eric Latimer
+EID: egl33
+
+Link to applied-nlp fork: https://github.com/ericlatimer/applied-nlp.git
+
+--------------------------------------------------------------------------------
+
+Problem 1
