@@ -107,25 +107,74 @@ class ExtendedFeatureExtractor(bitvectors: Map[String, BitVector])
   override def apply(
     verb: String, noun: String, prep: String, prepObj: String): Iterable[AttrVal] = {
  
-
-    val NumRE = """[/d]*[,.]*[/d]+""".r 
     // Use the basic feature extractor to get the basic features (no need to 
     // duplicate effort and specify it again).
     val basicFeatures = BasicFeatureExtractor(verb, noun, prep, prepObj)
 
     // Extract more features
     val verbNoun = AttrVal("verb+noun",verb + "+" + noun)
- 
-    val verbStem = 
+    val verbStem = AttrVal("verbStem",stemmer(verb))
+    val nounForm = AttrVal("nounForm",getNounForm(noun))
 
-    val nounForm = if (NumRE.pattern.matches
+	// Maybe mod the bitvector by something for a feature...
+	// example bitvector: 00000000000111101110100100011001
+	val verbBV: BitVector = bitvectors(verb)
+	val nounBV: BitVector = bitvectors(noun)
+	val prepBV: BitVector = bitvectors(prep)
+	val prepObjBV: BitVector = bitvectors(prepObj)
 
-    val extendedFeatures = 	
+	//println("nounBV31: " + nounBV)
+	val verb31 = AttrVal("verb31",verbBV.getBottomBits(1).toString)
+	val noun31 = AttrVal("noun31",nounBV.getBottomBits(1).toString)
+	val prep31 = AttrVal("prep31",prepBV.getBottomBits(1).toString)
+	val prepObj31 = AttrVal("prepObj31",prepObjBV.getBottomBits(1).toString)
 
+	val verb3031 = AttrVal("verb3031",verbBV.getBottomBits(2).toString)
+	val noun3031 = AttrVal("noun3031",nounBV.getBottomBits(2).toString)
+	val prep3031 = AttrVal("prep3031",prepBV.getBottomBits(2).toString)
+	val prepObj3031 = AttrVal("prepObj3031",prepObjBV.getBottomBits(2).toString)
+
+	val verb293031 = AttrVal("verb293031",verbBV.getBottomBits(3).toString)
+	val noun293031 = AttrVal("noun293031",nounBV.getBottomBits(3).toString)
+	val prep293031 = AttrVal("prep293031",prepBV.getBottomBits(3).toString)
+	val prepObj293031 = AttrVal("prepObj293031",prepObjBV.getBottomBits(3).toString)
+
+	val verb28293031 = AttrVal("verb28293031",verbBV.getBottomBits(4).toString)
+	val noun28293031 = AttrVal("noun28293031",nounBV.getBottomBits(4).toString)
+	val prep28293031 = AttrVal("prep28293031",prepBV.getBottomBits(4).toString)
+	val prepObj28293031 = AttrVal("prepObj28293031",prepObjBV.getBottomBits(4).toString)
+
+	val verb2728293031 = AttrVal("verb2728293031",verbBV.getBottomBits(4).toString)
+	val noun2728293031 = AttrVal("noun2728293031",nounBV.getBottomBits(4).toString)
+	val prep2728293031 = AttrVal("prep2728293031",prepBV.getBottomBits(4).toString)
+	val prepObj2728293031 = AttrVal("prepObj2728293031",prepObjBV.getBottomBits(4).toString)
+
+	val lastFiveBits = List(verb2728293031,noun2728293031,prep2728293031,prepObj2728293031)
+	val lastFourBits = List(verb28293031,noun28293031,prep28293031,prepObj28293031)
+	val lastThreeBits = List(verb293031,noun293031,prep293031,prepObj293031)
+	val lastTwoBits = List(verb3031,noun3031,prep3031,prepObj3031)
+	val lastOneBit = List(verb31,noun31,prep31,prepObj31)
+    val extendedFeatures = List(verbNoun,verbStem,nounForm)
+	
     // Return the features. You should of course add your features to basic ones.
-    basicFeatures + extendedFeatures
+    basicFeatures ++ lastThreeBits ++ lastFourBits ++ extendedFeatures
   }
 
+  def getVerbStem(verb: String): String = {
+    val verbLC = verb.toLowerCase
+    if (verbLC.endsWith("ing")) verb.substring(0,verb.length-3) else
+    if (verbLC.endsWith("es") || verbLC.endsWith("ed")) verb.substring(0,verb.length-2) else
+	verb
+  }
+
+  def getNounForm(noun: String): String = {
+	val NumRE = """[/d]*[,.]*[/d]+""".r
+	val AllCapsRE = """[A-Z]+""".r 
+    if (NumRE.pattern.matcher(noun).matches) "number" else
+	if (noun.charAt(0).isUpper) "Xx" else
+	if (AllCapsRE.pattern.matcher(noun).matches) "XX" else
+	"null"
+  }
 }
 
 /**
@@ -157,6 +206,19 @@ class BitVector(bits: IndexedSeq[Int]) {
    */
   def keepTopBits(index: Int) =
     new BitVector(bits.take(index) ++ Vector.fill(bits.length - index)(0))
+
+  /**
+   *  Keep the bottom bits up to the given index, and then make the remaining bits
+   *  zero.
+   */
+  def keepBottomBits(index: Int) =
+    new BitVector(Vector.fill(bits.length - index)(0) ++ bits.reverse.take(index) )
+
+  /**
+   *  Just get the bottom bits up to a given index
+   */
+  def getBottomBits(index: Int) =
+    new BitVector(bits.takeRight(index) )
 
   /**
    * Concatenate the bits together.

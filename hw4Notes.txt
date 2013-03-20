@@ -1,0 +1,38 @@
+Notes...
+
+Problem 3:
+
+No added features:
+
+Accuracy: 82.00049517207229
+
+Current BEST: basicFeatures ++ lastThreeBits ++ lastFourBits ++ extendedFeatures
+
+Accuracy: 82.56994305521168
+
+
+
+
+Just verbNoun:
+
+Accuracy: 81.90146075761328
+
+Just verbStem:
+
+Accuracy: 82.07477098291656
+
+Just nounForm:
+
+Accuracy: 82.2233226046051
+
+verbNoun, verbStem:
+
+Accuracy: 81.85194355038375
+
+verbStem, nounForm:
+
+Accuracy: 82.19856400099034
+
+verbNoun, verbStem, nounForm
+
+Accuracy: 82.00049517207229
