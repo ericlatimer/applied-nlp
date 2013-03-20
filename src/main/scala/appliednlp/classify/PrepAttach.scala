@@ -106,15 +106,24 @@ class ExtendedFeatureExtractor(bitvectors: Map[String, BitVector])
 
   override def apply(
     verb: String, noun: String, prep: String, prepObj: String): Iterable[AttrVal] = {
+ 
 
+    val NumRE = """[/d]*[,.]*[/d]+""".r 
     // Use the basic feature extractor to get the basic features (no need to 
     // duplicate effort and specify it again).
     val basicFeatures = BasicFeatureExtractor(verb, noun, prep, prepObj)
 
     // Extract more features
+    val verbNoun = AttrVal("verb+noun",verb + "+" + noun)
+ 
+    val verbStem = 
+
+    val nounForm = if (NumRE.pattern.matches
+
+    val extendedFeatures = 	
 
     // Return the features. You should of course add your features to basic ones.
-    basicFeatures
+    basicFeatures + extendedFeatures
   }
 
 }
