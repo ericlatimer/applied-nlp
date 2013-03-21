@@ -123,41 +123,23 @@ class ExtendedFeatureExtractor(bitvectors: Map[String, BitVector])
 	val prepBV: BitVector = bitvectors(prep)
 	val prepObjBV: BitVector = bitvectors(prepObj)
 
-	//println("nounBV31: " + nounBV)
-	val verb31 = AttrVal("verb31",verbBV.getBottomBits(1).toString)
-	val noun31 = AttrVal("noun31",nounBV.getBottomBits(1).toString)
-	val prep31 = AttrVal("prep31",prepBV.getBottomBits(1).toString)
-	val prepObj31 = AttrVal("prepObj31",prepObjBV.getBottomBits(1).toString)
+	val verbT6  = AttrVal("verbT6",verbBV.keepTopBits(6).toString)
+	val nounT6 = AttrVal("nounT6",nounBV.keepTopBits(6).toString)
+	val prepT6 = AttrVal("prepT6",prepBV.keepTopBits(6).toString)
+	val prepObjT6 = AttrVal("prepobjT6",prepObjBV.keepTopBits(6).toString)
 
-	val verb3031 = AttrVal("verb3031",verbBV.getBottomBits(2).toString)
-	val noun3031 = AttrVal("noun3031",nounBV.getBottomBits(2).toString)
-	val prep3031 = AttrVal("prep3031",prepBV.getBottomBits(2).toString)
-	val prepObj3031 = AttrVal("prepObj3031",prepObjBV.getBottomBits(2).toString)
+	val verb6 = AttrVal("verb6",verbBV.getBottomBits(6).toString)
+	val noun6 = AttrVal("noun6",nounBV.getBottomBits(6).toString)
+	val prep6 = AttrVal("prep6",prepBV.getBottomBits(6).toString)
+	val prepObj6 = AttrVal("prepObj6",prepObjBV.getBottomBits(6).toString)
 
-	val verb293031 = AttrVal("verb293031",verbBV.getBottomBits(3).toString)
-	val noun293031 = AttrVal("noun293031",nounBV.getBottomBits(3).toString)
-	val prep293031 = AttrVal("prep293031",prepBV.getBottomBits(3).toString)
-	val prepObj293031 = AttrVal("prepObj293031",prepObjBV.getBottomBits(3).toString)
+	val firstSixBits = List(verbT6,nounT6,prepT6,prepObjT6)
+	val lastSixBits = List(verb6,noun6,prep6,prepObj6)
 
-	val verb28293031 = AttrVal("verb28293031",verbBV.getBottomBits(4).toString)
-	val noun28293031 = AttrVal("noun28293031",nounBV.getBottomBits(4).toString)
-	val prep28293031 = AttrVal("prep28293031",prepBV.getBottomBits(4).toString)
-	val prepObj28293031 = AttrVal("prepObj28293031",prepObjBV.getBottomBits(4).toString)
-
-	val verb2728293031 = AttrVal("verb2728293031",verbBV.getBottomBits(4).toString)
-	val noun2728293031 = AttrVal("noun2728293031",nounBV.getBottomBits(4).toString)
-	val prep2728293031 = AttrVal("prep2728293031",prepBV.getBottomBits(4).toString)
-	val prepObj2728293031 = AttrVal("prepObj2728293031",prepObjBV.getBottomBits(4).toString)
-
-	val lastFiveBits = List(verb2728293031,noun2728293031,prep2728293031,prepObj2728293031)
-	val lastFourBits = List(verb28293031,noun28293031,prep28293031,prepObj28293031)
-	val lastThreeBits = List(verb293031,noun293031,prep293031,prepObj293031)
-	val lastTwoBits = List(verb3031,noun3031,prep3031,prepObj3031)
-	val lastOneBit = List(verb31,noun31,prep31,prepObj31)
     val extendedFeatures = List(verbNoun,verbStem,nounForm)
 	
     // Return the features. You should of course add your features to basic ones.
-    basicFeatures ++ lastThreeBits ++ lastFourBits ++ extendedFeatures
+     basicFeatures ++ firstSixBits ++ lastSixBits ++ extendedFeatures 
   }
 
   def getVerbStem(verb: String): String = {
