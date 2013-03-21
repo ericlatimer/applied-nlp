@@ -21,3 +21,5 @@ Accuracy: 82.19856400099034
 --------------------------------------------------------------------------------
 
 Problem 3
+
+(c) We tried numerous combinations of features, including the hints listed in the assignment spec.  We also tried many 
