@@ -18,6 +18,8 @@ For usage see below:
 	     """)
     val help = opt[Boolean]("help", noshort = true, descr = "Show this message")
     val verbose = opt[Boolean]("verbose")
+    val attach = opt[String]("a",descr="Attach for correct classification name")
+    val stpwords = opt[String]("stop", descr="File of list of stopwords")
     val inputDir = trailArg[String]("inputdir", descr = "Input dir to create features from.")
   }
 }
@@ -33,36 +35,34 @@ object TopicFeatures {
    * The main method -- do the work. Don't change it.
    */
   def main(args: Array[String]) {
-
+    
     // Parse and get the command-line options
     val opts = TopicFeaturesOpts(args)
-   
+    val stopwords = io.Source.fromFile(opts.stpwords()).getLines.toSet
     val inputDir = opts.inputDir()
+    val attach = opts.attach()
 
     val featureExtractor2 = BasicFeatureExtractor2
-
+	
 	for (file <- new java.io.File(inputDir).listFiles) {
-		val tokens = SimpleTokenizer(io.Source.fromFile(inputDir+"/"+file.getName()).getLines.mkString)
-		val filteredTokens = tokens.filter(x => x.length > 3 )
+		
+		val tokens = SimpleTokenizer(io.Source.fromFile(inputDir+"/"+file.getName()).getLines.map(x => x + " ").mkString.toLowerCase)
+		val filteredTokens = tokens.filter(_.exists(_.isLetter)).filterNot(x => stopwords.contains(x)).filter(x => x.length > 3 )
+
 								   .groupBy(x => x)
 								   .mapValues(_.length)
-								   .filter(_._2 > 2)
+								   .filter(x => (x._2 > 2 || x._1.length > 4))
 								   .toList //.map{case (x,y) => (x,y)}
 								   .sortBy(_._2)
 								   .reverse
-								   .take(10)
+								   .take(7)
 								   
-		println(filteredTokens)				   
+		//println(filteredTokens)	
+		val features = featureExtractor2(filteredTokens)			   
 		//filteredTokens.foreach(println)
+		println(features.map(_.toString).mkString(",") + "," + attach)
 	}
-
-	/*
-    io.Source.fromFile(inputDir).getLines.foreach { line =>
-      val Array(id, verb, noun, prep, prepObj, attach) = line.split(" ")
-      val features = featureExtractor2(verb, noun, prep, prepObj)
-      println(features.map(_.toString).mkString(",") + "," + attach)
-    }
-	*/
+   
   }
 
 }
@@ -74,11 +74,13 @@ object TopicFeatures {
 trait FeatureExtractor2 {
   
   /**
+
    * Given the verb, noun, preposition, and prepositional object,
    * create a set of AttrVal objects. (A "feature" is an attribute with a
    * value.) 
    */
-  def apply(verb: String, noun: String, prep: String, prepObj: String): Iterable[AttrVal]
+  //def apply(verb: String, noun: String, prep: String, prepObj: String): Iterable[AttrVal]
+   def apply(tokens: List[(String,Int)]): Iterable[AttrVal]	
 }
 
 /**
@@ -88,12 +90,12 @@ trait FeatureExtractor2 {
 object BasicFeatureExtractor2 extends FeatureExtractor2 {
 
   override def apply(
-    verb: String, noun: String, prep: String, prepObj: String): Iterable[AttrVal] = {
-    List(
-      AttrVal("verb", verb),
-      AttrVal("noun", noun),
-      AttrVal("prep", prep),
-      AttrVal("prep_obj", prepObj))
+    tokens: List[(String,Int)]): Iterable[AttrVal] = {
+      (for (token <- tokens) yield {
+	AttrVal("word",token._1)
+      }).toList
+
+     
   }
 
 }
